@@ -35,8 +35,6 @@ class TicTacToe:
             user_selection = input('Please select a row and column number (i.e. 11, 21, 32, etc): ')
             try:
                 r, c = list(map(int, user_selection))
-                r -= 1
-                c -= 1
             except ValueError:
                 print('Invalid format. Please follow the specified format.')
                 continue
@@ -46,7 +44,7 @@ class TicTacToe:
             if not self.board[r][c] == TicTacToe.EMPTY_FIELD:
                 print('Please select unoccupied field!')
                 continue
-            return r, c
+            return r-1, c-1
 
     def check_for_winner(self):
         for sequence in self.get_sequences():
@@ -84,7 +82,7 @@ class TicTacToe:
     def board_is_full(self):
         for row in self.board:
             for cell in row:
-                if cell == ' ':
+                if cell == TicTacToe.EMPTY_FIELD:
                     return False
         print("It's a draw!")
         return True
@@ -102,6 +100,7 @@ class TicTacToe:
                 print(f'Congratulations! Player {player} wins!')
                 break
             player = self.swap_player(player)
+
 
 
 def main():
