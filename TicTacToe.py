@@ -7,9 +7,8 @@ class TicTacToe:
         self.size = size
         self.board = [[' ' for c in range(size)] for r in range(size)]
 
-    def display_board(self):  # Displaying current board status.
-        system('cls')  # Clearing previous view of the board.
-
+    def display_board(self):
+        system('cls')
         header = [str(i) if i > 0 else ' ' for i in range(self.size + 1)]
         print(" | ".join(header))
         for i, r in enumerate(self.board):
@@ -22,9 +21,11 @@ class TicTacToe:
             return 'O'
         return 'X'
 
+    # Applying player's move.
     def make_a_move(self, plyr, r, c):
         self.board[r][c] = plyr
 
+    # Checking if player's selection is in valid format.
     def valid_user_move(self, selection):
         try:
             row, column = list(map(int, selection))
@@ -36,6 +37,7 @@ class TicTacToe:
             return False
         return True
 
+    # Checking if selected field is available.
     def field_is_empty(self, r, c):
         if self.board[r][c] == ' ':
             return True
@@ -51,6 +53,7 @@ class TicTacToe:
             return True
         return False
 
+    # Scanning all rows if we have a winner.
     def winner_rows(self, player):
         for row in range(self.size):
             winner = True
@@ -61,6 +64,7 @@ class TicTacToe:
             if winner:
                 return winner
 
+    # Scanning all columns if we have a winner.
     def winner_columns(self, player):
         for col in range(self.size):
             winner = True
@@ -71,6 +75,7 @@ class TicTacToe:
             if winner:
                 return winner
 
+    # Scanning the two diagonals if we have a winner.
     def winner_diagonals(self, player):
         winner = True
         for i in range(self.size):
@@ -87,6 +92,7 @@ class TicTacToe:
                 break
         return winner
 
+    # Scanning if there are empty cells/fields or if the board is full.
     def board_is_full(self):
         for row in self.board:
             for cell in row:
@@ -95,6 +101,7 @@ class TicTacToe:
         print("It's a draw!")
         return True
 
+    # The play method initiates the game.
     def play(self):
         self.display_board()
         player = 'X'
