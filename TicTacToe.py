@@ -65,8 +65,7 @@ class TicTacToe:
     def get_columns(self):
         columns = []
         for c in range(self.size):
-            col = [self.board[r][c] for r in range(self.size)]
-            columns.append(col)
+            columns.append(self.board[r][c] for r in range(self.size))
         return columns
 
     def get_diagonals(self):
