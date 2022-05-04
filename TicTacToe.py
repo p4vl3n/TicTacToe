@@ -126,15 +126,13 @@ class TicTacToe:
         :return:
         """
 
-        scores_board = [[0 if self.board[row][col] == self.EMPTY_FIELD else self.FILLED for col in range(self.size)]
-                        for row in range(self.size)]
+        scores_board = [[0 if self.board[r][c] == self.EMPTY_FIELD else self.FILLED for c in range(self.size)]
+                        for r in range(self.size)]
         for score_prediction in range(self.ai_level):
             simulation_board = copy.deepcopy(self.board)
-            row, column, score = self.simulate(simulation_board)
-            scores_board[row][column] += score
-
+            row, col, score = self.simulate(simulation_board)
+            scores_board[row][col] += score
         best_move = self.find_best_move(scores_board)
-
         return best_move
 
     def simulate(self, board_copy):
@@ -142,26 +140,24 @@ class TicTacToe:
         score_index = 1
         player = self.ai
         row = None
-        column = None
+        col = None
         is_first_move = True
         possible_moves = self.get_possible_moves(board_copy)
-
         while possible_moves:
             r, c = possible_moves[randint(0, len(possible_moves) - 1)]
             if is_first_move:
-                row, column = r, c
+                row, col = r, c
                 is_first_move = False
             board_copy[r][c] = player
             if not self.check_for_winner(board_copy) == self.empty_field:
-                score = sum([sum([score_index for col in row if col == self.empty_field]) for row in board_copy])
+                score = sum([sum([score_index for i in board_row if i == self.empty_field]) for board_row in board_copy])
                 if self.check_for_winner(board_copy) == self.player:
                     score *= -1
                 break
 
             player = self.swap_player(player)
             possible_moves = self.get_possible_moves(board_copy)
-
-        return row, column, score
+        return row, col, score
 
     def find_best_move(self, board):
         best_move = ()
@@ -208,6 +204,8 @@ def main():
             continue
         # level = int(input('Choose a difficulty level (i.e. 10, 50, 100, 200): '))
         user_choice = input('Type X to play first or O to play second: ')
+        while user_choice.lower() != 'x' and user_choice.lower() != 'o':
+            user_choice = input('Type X to play first or O to play second: ')
 
         board = TicTacToe(board_size, user_choice.upper())
         board.play()
