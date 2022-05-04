@@ -9,11 +9,11 @@ class TicTacToe:
     PLAYER_X = 'X'
     PLAYER_O = 'O'
     FILLED = -maxsize
-    AI_LEVEL = 100000  # Added an AI Level variable. With higher number, more scenarios are simulated.
+    AI_LEVEL = 10000  # Added an AI Level variable. With higher number, more scenarios are simulated.
 
     def __init__(self, size, player):
         self.size = size
-        self.board = [[TicTacToe.EMPTY_FIELD for c in range(size)] for r in range(size)]
+        self.board = [[TicTacToe.EMPTY_FIELD for _ in range(size)] for __ in range(size)]
         self.player = player
         self.ai = TicTacToe.PLAYER_X if self.player == TicTacToe.PLAYER_O else TicTacToe.PLAYER_O
         self.empty_field = TicTacToe.EMPTY_FIELD
@@ -57,6 +57,7 @@ class TicTacToe:
 
     # Running through every possible sequence (row, column and diagonal) and calling a checking method on it.
     def check_for_winner(self, board):
+        winner = None
         for sequence in self.get_sequences(board):
             winner = self.winning_sequence(sequence)
             if not winner == TicTacToe.EMPTY_FIELD:
@@ -132,12 +133,7 @@ class TicTacToe:
             row, column, score = self.simulate(simulation_board)
             scores_board[row][column] += score
 
-        best_move = ()
-        best_score = -maxsize
-        for row in range(self.size):
-            for col in range(self.size):
-                if scores_board[row][col] > best_score:
-                    best_move = row, col
+        best_move = self.find_best_move(scores_board)
 
         return best_move
 
@@ -166,6 +162,17 @@ class TicTacToe:
             possible_moves = self.get_possible_moves(board_copy)
 
         return row, column, score
+
+    def find_best_move(self, board):
+        best_move = ()
+        best_score = -maxsize
+        for row in range(self.size):
+            for col in range(self.size):
+                if board[row][col] > best_score:
+                    best_move = row, col
+                    best_score = board[row][col]
+
+        return best_move
 
     # The play method initiates the game.
     def play(self):
