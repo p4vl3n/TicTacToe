@@ -8,7 +8,8 @@ class TicTacToe:
     EMPTY_FIELD = ' '
     PLAYER_X = 'X'
     PLAYER_O = 'O'
-    AI_LEVEL = 100  # Added an AI Level variable. With higher number, more scenarios are simulated.
+    FILLED = -maxsize
+    AI_LEVEL = 100000  # Added an AI Level variable. With higher number, more scenarios are simulated.
 
     def __init__(self, size, player):
         self.size = size
@@ -123,42 +124,48 @@ class TicTacToe:
         At the end we iterate over all possible moves, and we return the one with the highest score.
         :return:
         """
-        score_index = 1
-        scores = {}
+
+        scores_board = [[0 if self.board[row][col] == self.EMPTY_FIELD else self.FILLED for col in range(self.size)]
+                        for row in range(self.size)]
         for score_prediction in range(self.ai_level):
-            player = self.ai
-            first_move = None
-            is_first_move = True
             simulation_board = copy.deepcopy(self.board)
-            possible_moves = self.get_possible_moves(simulation_board)
-            score = 0
-            while possible_moves:
-                r, c = possible_moves[randint(0, len(possible_moves) - 1)]
-                if is_first_move:
-                    first_move = r, c
-                    is_first_move = False
-                simulation_board[r][c] = player
-                if not self.check_for_winner(simulation_board) == self.empty_field:
-                    score = sum([sum([score_index for col in row if col == self.empty_field]) for row in simulation_board])
-                    if self.check_for_winner(simulation_board) == self.player:
-                        score *= -1
-                    break
-
-                player = self.swap_player(player)
-                possible_moves = self.get_possible_moves(simulation_board)
-
-            if first_move not in scores:
-                scores[first_move] = 0
-            scores[first_move] += score
+            row, column, score = self.simulate(simulation_board)
+            scores_board[row][column] += score
 
         best_move = ()
         best_score = -maxsize
-        for move, score in scores.items():
-            if score > best_score:
-                best_score = score
-                best_move = move
+        for row in range(self.size):
+            for col in range(self.size):
+                if scores_board[row][col] > best_score:
+                    best_move = row, col
 
         return best_move
+
+    def simulate(self, board_copy):
+        score = 0
+        score_index = 1
+        player = self.ai
+        row = None
+        column = None
+        is_first_move = True
+        possible_moves = self.get_possible_moves(board_copy)
+
+        while possible_moves:
+            r, c = possible_moves[randint(0, len(possible_moves) - 1)]
+            if is_first_move:
+                row, column = r, c
+                is_first_move = False
+            board_copy[r][c] = player
+            if not self.check_for_winner(board_copy) == self.empty_field:
+                score = sum([sum([score_index for col in row if col == self.empty_field]) for row in board_copy])
+                if self.check_for_winner(board_copy) == self.player:
+                    score *= -1
+                break
+
+            player = self.swap_player(player)
+            possible_moves = self.get_possible_moves(board_copy)
+
+        return row, column, score
 
     # The play method initiates the game.
     def play(self):
