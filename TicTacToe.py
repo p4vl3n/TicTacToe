@@ -130,8 +130,15 @@ class TicTacToe:
                         for r in range(self.size)]
         for score_prediction in range(self.ai_level):
             simulation_board = copy.deepcopy(self.board)
-            row, col, score = self.simulate(simulation_board)
-            scores_board[row][col] += score
+            self.simulate(simulation_board)
+            condition = self.check_for_winner(simulation_board)
+            if condition != self.empty_field:
+                additive = 1 if self.ai == condition else -1
+                for row_index in range(self.size):
+                    for col_index in range(self.size):
+                        if self.board[row_index][col_index] != simulation_board[row_index][col_index]:
+                            scores_board[row_index][col_index] += additive
+
         best_move = self.find_best_move(scores_board)
         return best_move
 
@@ -157,7 +164,8 @@ class TicTacToe:
 
             player = self.swap_player(player)
             possible_moves = self.get_possible_moves(board_copy)
-        return row, col, score
+
+        return board_copy
 
     def find_best_move(self, board):
         best_move = ()
