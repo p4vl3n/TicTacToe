@@ -56,6 +56,7 @@ class TicTacToe:
             return r, c
 
     # Running through every possible sequence (row, column and diagonal) and calling a checking method on it.
+    # If there is a winner, method returns the winner, else it returns EMPTY_FIELD
     def check_for_winner(self, board):
         winner = None
         for sequence in self.get_sequences(board):
@@ -109,6 +110,49 @@ class TicTacToe:
                     possible_moves.append((row, col))
         return possible_moves
 
+    def mini_max(self, board, player):
+        if not self.get_possible_moves(board) and self.check_for_winner(board) == self.EMPTY_FIELD:
+            return 0
+        elif self.check_for_winner(board) == self.ai:
+            return 1 + len(self.get_possible_moves(board))
+        elif self.check_for_winner(board) == self.player:
+            return -1 - len(self.get_possible_moves(board))
+
+        if player == self.player:
+            best_score = -maxsize
+            for move in self.get_possible_moves(board):
+                row, col = move
+                board[row][col] = self.ai
+                score = self.mini_max(board, self.swap_player(player))
+                if score > best_score:
+                    best_score = score
+                board[row][col] = self.EMPTY_FIELD
+        else:
+            best_score = maxsize
+            for move in self.get_possible_moves(board):
+                row, col = move
+                board[row][col] = self.player
+                score = self.mini_max(board, self.swap_player(player))
+                if score < best_score:
+                    best_score = score
+                board[row][col] = self.EMPTY_FIELD
+        return best_score
+
+    def next_best_ai_move_mini_max(self):
+        score = 0
+        scores_board = [[0 if self.board[r][c] == self.empty_field else self.FILLED for c in range(self.size)]
+                        for r in range(self.size)]
+        possible_moves = self.get_possible_moves(self.board)
+        simulation_board = copy.deepcopy(self.board)
+        for move in possible_moves:
+            row, col = move
+            simulation_board[row][col] = self.ai
+            scores_board[row][col] += self.mini_max(simulation_board, self.ai)
+            simulation_board[row][col] = self.empty_field
+
+        best_move = self.find_best_move(scores_board)
+        return best_move
+
     # A method to find the best possible next move.
     def next_best_ai_move(self):
         """
@@ -143,17 +187,13 @@ class TicTacToe:
         return best_move
 
     def simulate(self, board_copy):
-        score = 0
         score_index = 1
         player = self.ai
-        row = None
-        col = None
         is_first_move = True
         possible_moves = self.get_possible_moves(board_copy)
         while possible_moves:
             r, c = possible_moves[randint(0, len(possible_moves) - 1)]
             if is_first_move:
-                row, col = r, c
                 is_first_move = False
             board_copy[r][c] = player
             if not self.check_for_winner(board_copy) == self.empty_field:
@@ -189,7 +229,7 @@ class TicTacToe:
             if next_player == self.player:
                 row, column = self.valid_user_move()
             else:
-                row, column = self.next_best_ai_move()
+                row, column = self.next_best_ai_move_mini_max()
             self.make_a_move(next_player, row, column)
             self.display_board()
             if not self.check_for_winner(self.board) == TicTacToe.EMPTY_FIELD:
