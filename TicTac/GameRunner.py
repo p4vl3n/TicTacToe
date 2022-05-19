@@ -9,8 +9,11 @@ def main():
         except ValueError:  # Prompting players to enter the correct format if they haven't done so.
             print('Please enter a whole number to select the board size.')
             continue
-        difficulty_level = int(input('Choose difficutly level (1-10): '))
-        # level = int(input('Choose a difficulty level (i.e. 10, 50, 100, 200): '))
+
+        difficulty_level = int(input('Choose difficulty level (1 for easy, 2 for hard): '))
+        while difficulty_level != 1 and difficulty_level != 2:
+            difficulty_level = int(input('Choose difficulty level (1 for easy, 2 for hard): '))
+
         user_choice = input('Type X to play first or O to play second: ')
         while user_choice.lower() != 'x' and user_choice.lower() != 'o':
             user_choice = input('Type X to play first or O to play second: ')

@@ -4,11 +4,8 @@ from TicTac.SimpleAi import SimpleAi
 
 
 class TicTacToe(MiniMax, SimpleAi):
-    PLAYER_X = 'X'
-    PLAYER_O = 'O'
-    FILLED = -maxsize
-    LEVEL_MULTIPLIER = 10000
-    MINIMAX_LEVEL_BAR = 99999
+    LEVEL_MULTIPLIER = 150000
+    MINIMAX_LEVEL_BAR = 299999
 
     def __init__(self, size, player, level):
         super().__init__()
@@ -17,6 +14,24 @@ class TicTacToe(MiniMax, SimpleAi):
         self.player = player
         self.ai = TicTacToe.PLAYER_X if self.player == TicTacToe.PLAYER_O else TicTacToe.PLAYER_O
         self.level = level * TicTacToe.LEVEL_MULTIPLIER
+
+    def valid_user_move(self):
+        while True:
+            user_selection = input('Please select a row and column number (i.e. 11, 21, 32, etc): ')
+            try:
+                r, c = list(map(int, user_selection))
+                r -= 1
+                c -= 1
+            except ValueError:
+                print('Invalid format. Please follow the specified format.')
+                continue
+            if r >= self.size or c >= self.size:  # Checking if selected row by
+                print(f'Selected row or column out of range. Please select a row and column from 1 to {self.size}.')
+                continue
+            if not self.board[r][c] == self.empty_field:
+                print('Please select unoccupied field!')
+                continue
+            return r, c
 
     def play(self):
         self.display_board()

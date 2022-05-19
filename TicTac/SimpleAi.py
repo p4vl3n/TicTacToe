@@ -1,14 +1,12 @@
 from random import randint
 import copy
 from sys import maxsize
-from Helpers import Helpers
+from TicTac.BoardScanner import BoardScanner
+from Helpers import find_best_move
 
 
-class SimpleAi(Helpers):
+class SimpleAi(BoardScanner):
     FILLED = -maxsize
-
-    def __init__(self):
-        super().__init__()
 
     def simple_ai(self, level):
         """
@@ -39,7 +37,7 @@ class SimpleAi(Helpers):
                         if self.board[row_index][col_index] != simulation_board[row_index][col_index]:
                             scores_board[row_index][col_index] += additive
 
-        best_move = self.find_best_move(scores_board)
+        best_move = find_best_move(scores_board)
         return best_move
 
     def simulate(self, board_copy):
